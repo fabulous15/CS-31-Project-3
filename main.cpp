@@ -74,28 +74,28 @@ int translateSong(string song, string& instructions, int& badBeat)
         while (i < song.length()){
             if (song[i] == '/'){
                 currentInstructions += "x";
-                i = i + 1;
-                beat += 1;
+                i ++;
+                beat ++;
             } //if the first char is '/', print x, move to the next char and restart the process
-            else{
-                //if the first is a letter
+            else{ //if the first is a letter
                 if (song[i+1] == '/'){
                     currentInstructions += tolower(song[i]);
-                    i = i + 2;
-                    beat += 1;
+                    i += 2;
+                    beat ++;
                 } //if the second is '/', print the letter in lower case, move to the next char and restart the process
                 else{//if the second is a digit
                     if (song[i+2] == '/'){//if the third is '/'
-                        if (song[i+1] == '0' || song[i+1] == '1'){
+                        if (song[i+1] == '0' || song[i+1] == '1'){ //if the digit is 0 or 1
                             badBeat = beat;
                             return 2;
-                            break;//if the digit is 0 or 1, end process. set badBeat and return 2.
+                            break;//end process. set badBeat and return 2.
                         }
                         else{
                             int j = 2;
-                            while (j <= song[i+1] - 48 && j+i+2 <= song.length()){
+                            while (j <= song[i+1] - 47 && j+i+1 <= song.length()){
                                 if (song[i+j] == '/'){
                                     j++;
+                                    beat++;
                                 }
                                 else{
                                     badBeat = beat;
@@ -104,7 +104,7 @@ int translateSong(string song, string& instructions, int& badBeat)
                                     break;
                                 }
                             }
-                            if (j < song[i+1] - 48){
+                            if (j <= song[i+1] - 47){
                                 badBeat = beat;
                                 return 4;
                                 break;
@@ -115,7 +115,7 @@ int translateSong(string song, string& instructions, int& badBeat)
                                     currentInstructions += toupper(song[i]);
                                     k++;
                                 }
-                                i = i + 2*(song[i+1]);
+                                i = i + song[i+1] - 46;
                                 beat ++;
                             }
                         }
@@ -128,9 +128,10 @@ int translateSong(string song, string& instructions, int& badBeat)
                         }
                         else{
                             int j = 3;
-                            while (j <= (song[i+1] - 48)*10 + song[i+2] - 48 && j+i+3 <= song.length()){
+                            while (j <= (song[i+1] - 48)*10 + song[i+2] - 46 && j+i+1 <= song.length()){
                                 if (song[i+j] == '/'){
                                     j++;
+                                    beat++;
                                 }
                                 else{
                                     badBeat = beat;
@@ -139,7 +140,7 @@ int translateSong(string song, string& instructions, int& badBeat)
                                     break;
                                 }
                             }
-                            if (j < (song[i+1] - 48)*10 + song[i+2] - 48){
+                            if (j <= (song[i+1] - 48)*10 + song[i+2] - 46){
                                 badBeat = beat;
                                 return 4;
                                 break;
@@ -150,7 +151,7 @@ int translateSong(string song, string& instructions, int& badBeat)
                                     currentInstructions += toupper(song[i]);
                                     k++;
                                 }
-                                i = i + 2*((song[i+1] - 48)*10 + song[i+2] - 48);
+                                i = i + (song[i+1] - 48)*10 + song[i+2] - 45;
                                 beat++;
                             }
                         }
