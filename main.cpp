@@ -18,42 +18,42 @@ bool hasCorrectSyntax(string song)
     else{
         i = 0;
         while (i < song.length()){
-            if (song[i] == 'G'||song[i] == 'g'||song[i] == 'R'||song[i] == 'r'||song[i] == 'Y'||song[i] == 'y'||song[i] == 'B'||song[i] == 'b'||song[i] == 'O'||song[i] == 'o'){
-                if (song[i+1] == '0'||song[i+1] == '1'||song[i+1] == '2'||song[i+1] == '3'||song[i+1] == '4'||song[i+1] == '5'||song[i+1] == '6'||song[i+1] == '7'||song[i+1] == '8'||song[i+1] == '9'){
-                    if (song[i+2] == '0'||song[i+2] == '1'||song[i+2] == '2'||song[i+2] == '3'||song[i+2] == '4'||song[i+2] == '5'||song[i+2] == '6'||song[i+2] == '7'||song[i+2] == '8'||song[i+2] == '9'){
+            if (song[i] == 'G'||song[i] == 'g'||song[i] == 'R'||song[i] == 'r'||song[i] == 'Y'||song[i] == 'y'||song[i] == 'B'||song[i] == 'b'||song[i] == 'O'||song[i] == 'o'){ //check if the first character of the beat is a color
+                if (song[i+1] == '0'||song[i+1] == '1'||song[i+1] == '2'||song[i+1] == '3'||song[i+1] == '4'||song[i+1] == '5'||song[i+1] == '6'||song[i+1] == '7'||song[i+1] == '8'||song[i+1] == '9'){ //check if the second character of the beat is a digit
+                    if (song[i+2] == '0'||song[i+2] == '1'||song[i+2] == '2'||song[i+2] == '3'||song[i+2] == '4'||song[i+2] == '5'||song[i+2] == '6'||song[i+2] == '7'||song[i+2] == '8'||song[i+2] == '9'){ //check if the third character of the beat is a digit
                         if (song[i+3] == '/'){
-                            i = i + 4;
+                            i += 4; //move to the next beat
                         }
                         else{
                             break;
                         }
                     }
                     else if (song[i+2] == '/'){
-                        i = i + 3;
+                        i += 3; //move to the next beat
                     }
                     else{
                         break;
                     }
                 }
                 else if (song[i+1] == '/'){
-                    i = i + 2;
+                    i += 2; //move to the next beat
                 }
                 else{
                     break;
                 }
             }
             else if (song[i] == '/'){
-                i = i + 1;
+                i ++; //move to the next beat
             }
             else{
                 break;
             }
         }
-        if (i == song.length()){
+        if (i == song.length()){ //if the checking process ends after finish checking the last character
             return true;
         }
         else{
-            return false;
+            return false; //if the checking process ends before finish checking the last character
         }
     }
 }
@@ -63,7 +63,7 @@ int translateSong(string song, string& instructions, int& badBeat)
     int beat = 1;
     int i = 0;
     string currentInstructions = "";
-    if (!hasCorrectSyntax(song)){
+    if (!hasCorrectSyntax(song)){ //for all songs without correct syntax
         return 1;
     }
     else if (song == ""){
@@ -74,92 +74,90 @@ int translateSong(string song, string& instructions, int& badBeat)
         while (i < song.length()){
             if (song[i] == '/'){
                 currentInstructions += "x";
-                i ++;
-                beat ++;
-            } //if the first char is '/', print x, move to the next char and restart the process
+                i ++; //move to the next beat
+                beat ++; //update the beat we are checking
+            } //if the first character is '/', print x, move to the next character and restart the checking process
             else{ //if the first is a letter
                 if (song[i+1] == '/'){
                     currentInstructions += tolower(song[i]);
-                    i += 2;
-                    beat ++;
-                } //if the second is '/', print the letter in lower case, move to the next char and restart the process
-                else{//if the second is a digit
-                    if (song[i+2] == '/'){//if the third is '/'
+                    i += 2; //move to the next beat
+                    beat ++; //update the beat we are checking
+                } //if the second is '/', print the letter in lower case, move to the next character and restart the checking process
+                else{ //if the second is a digit
+                    if (song[i+2] == '/'){
                         if (song[i+1] == '0' || song[i+1] == '1'){ //if the digit is 0 or 1
-                            badBeat = beat;
-                            return 2;
-                            break;//end process. set badBeat and return 2.
-                        }
-                        else{
-                            int j = 2;
-                            while (j <= song[i+1] - 47 && j+i+1 <= song.length()){
-                                if (song[i+j] == '/'){
-                                    j++;
-                                    beat++;
-                                }
-                                else{
-                                    badBeat = beat;
-                                    return 3;
-                                    break;
-                                    break;
-                                }
-                            }
-                            if (j <= song[i+1] - 47){
-                                badBeat = beat;
-                                return 4;
-                                break;
-                            }
-                            else{
-                                int k = 1;
-                                while(k <= song[i+1] - 48){
-                                    currentInstructions += toupper(song[i]);
-                                    k++;
-                                }
-                                i = i + song[i+1] - 46;
-                                beat ++;
-                            }
-                        }
-                    }
-                    else{
-                        if (song[i+1]-48 == 0 && (song[i+2]-48 == 0 || song[i+2]-48 == 1)){
                             badBeat = beat;
                             return 2;
                             break;
                         }
-                        else{
-                            int j = 3;
-                            while (j <= (song[i+1] - 48)*10 + song[i+2] - 46 && j+i+1 <= song.length()){
+                        else{ //if the digit is at least 2
+                            int j = 2;
+                            while (j <= song[i+1] - 47 && j+i+1 <= song.length()){ //check if right number of slashes follows the digit without running out of the length of the song
                                 if (song[i+j] == '/'){
-                                    j++;
-                                    beat++;
+                                    j++; //move to the next beat
+                                    beat++; //update the beat we are checking
                                 }
-                                else{
+                                else{ //if we meet a non-slash character
                                     badBeat = beat;
                                     return 3;
                                     break;
                                     break;
                                 }
                             }
-                            if (j <= (song[i+1] - 48)*10 + song[i+2] - 46){
+                            if (j <= song[i+1] - 47){ //if the song ends prematurely
                                 badBeat = beat;
                                 return 4;
                                 break;
                             }
-                            else{
+                            else{ //if the number of slashes follows the digit is correct
+                                int k = 1;
+                                while(k <= song[i+1] - 48){
+                                    currentInstructions += toupper(song[i]);
+                                    k++;
+                                } // add the right number of upper-case letters to the temporary instructions
+                                i = i + song[i+1] - 46; //move to the next beat
+                            }
+                        }
+                    }
+                    else{ //if the third character is a digit
+                        if (song[i+1]-48 == 0 && (song[i+2]-48 == 0 || song[i+2]-48 == 1)){ //if the two digit constitute 00 or 01
+                            badBeat = beat;
+                            return 2;
+                            break;
+                        }
+                        else{ //if the number formed by the two digits is at least 2
+                            int j = 3;
+                            while (j <= (song[i+1] - 48)*10 + song[i+2] - 46 && j+i+1 <= song.length()){  //check if right number of slashes follows the digit without running out of the length of the song
+                                if (song[i+j] == '/'){
+                                    j++; //move to the next beat
+                                    beat++; //update the beat we are checking
+                                }
+                                else{ //if we meet a non-slash character
+                                    badBeat = beat;
+                                    return 3;
+                                    break;
+                                    break;
+                                }
+                            }
+                            if (j <= (song[i+1] - 48)*10 + song[i+2] - 46){ //if the song ends prematurely
+                                badBeat = beat;
+                                return 4;
+                                break;
+                            }
+                            else{ //if the number of slashes follows the digit is correct
                                 int k = 1;
                                 while(k <= ((song[i+1] - 48)*10 + song[i+2] - 48)){
                                     currentInstructions += toupper(song[i]);
                                     k++;
-                                }
-                                i = i + (song[i+1] - 48)*10 + song[i+2] - 45;
-                                beat++;
+                                } // add the right number of upper-case letters to the temporary instructions
+                                i = i + (song[i+1] - 48)*10 + song[i+2] - 45; //move to the next beat
                             }
                         }
                     }
                 }
             }
         }
-        instructions = currentInstructions;
+        instructions = currentInstructions; //set instructions as the temporary instructions if nothing went wrong thoughout the whole cheking process
         return 0;
     }
 }
@@ -167,14 +165,12 @@ int translateSong(string song, string& instructions, int& badBeat)
 int main()
 {
     string song;
-    string instruct = "wrong";
+    string instruct = "The song is not translatable.";
     int badb = -99;
     cout << "Enter song: ";
         getline(cin, song);
     translateSong(song, instruct, badb);
-    cout << "situation: " << translateSong(song, instruct, badb) << endl;
-    cout << "instructions: " << instruct << endl;
-    cout << "bad beat: " << badb << endl;
+    cout << "Instructions: " << instruct << endl;
+    cout << "Situation: " << translateSong(song, instruct, badb) << endl;
+    cout << "Bad beat: " << badb << endl;
 }
-
-
